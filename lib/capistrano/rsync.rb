@@ -10,6 +10,7 @@ set :rsync_copy, "rsync --archive --acls --xattrs"
 
 # Stage is used on your local machine for rsyncing from.
 set :rsync_stage, "tmp/deploy"
+set :rsync_syncdir, fetch(:rsync_stage)
 
 # Cache is used on the server to copy files to from to the release directory.
 # Saves you rsyncing your whole app folder each time.  If you nil rsync_cache,
@@ -32,7 +33,7 @@ task :rsync => %w[rsync:stage] do
 
     rsync = %w[rsync]
     rsync.concat fetch(:rsync_options)
-    rsync << fetch(:rsync_stage) + "/"
+    rsync << fetch(:rsync_syncdir) + "/"
     rsync << "#{user}#{role.hostname}:#{rsync_cache.call || release_path}"
 
     Kernel.system *rsync
